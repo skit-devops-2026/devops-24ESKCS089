@@ -23,8 +23,13 @@ app.use("/api/admin", adminRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-    res.json({
-        message: "Rescue Network API is running!"
+    res.json({ message: "Rescue Network API is running!" });
+});
+
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        commit: process.env.GITHUB_SHA || "local"
     });
 });
 
