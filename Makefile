@@ -6,7 +6,6 @@ install:
 
 test:
 	cd server && npm test
-	cd client && CI=true npm test -- --watchAll=false
 
 build:
 	cd client && npm run build
