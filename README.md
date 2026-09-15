@@ -1,8 +1,5 @@
 # Rescue-Network
 
-> Replace every angle-bracket placeholder below. The hygiene check in CI will
-> fail until you do.
-
 ## Author
 
 | Roll No. | Name | GitHub username |
@@ -32,7 +29,7 @@ make run
 
 ## Live URL
 
-<Add once M5 is done. Until then, leave as is.>
+Deployment pending (to be added once M5 is completed).
 
 ## Health endpoint
 
