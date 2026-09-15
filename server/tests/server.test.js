@@ -10,4 +10,10 @@ describe("Rescue Network API", () => {
             "Rescue Network API is running!"
         );
     });
+    test("GET /health should return health status", async () => {
+    const response = await request(app).get("/health");
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.status).toBe("ok");
+});
 });
