@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const Donation = require("../models/Donation");
 const Request = require("../models/Request");
 const Pickup = require("../models/Pickup");

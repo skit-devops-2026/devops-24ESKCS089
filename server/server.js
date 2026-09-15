@@ -20,15 +20,6 @@ app.use("/api/donations", donationRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/pickups", pickupRoutes);
 app.use("/api/admin", adminRoutes);
-// MongoDB connection
-mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log("MongoDB connected successfully!");
-    })
-    .catch((error) => {
-        console.error("MongoDB connection failed:", error.message);
-    });
 
 // Test route
 app.get("/", (req, res) => {
@@ -39,6 +30,19 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+    mongoose
+        .connect(process.env.MONGODB_URI)
+        .then(() => {
+            console.log("MongoDB connected successfully!");
+
+            app.listen(PORT, () => {
+                console.log(`Server running on port ${PORT}`);
+            });
+        })
+        .catch((error) => {
+            console.error("MongoDB connection failed:", error.message);
+        });
+}
+
+module.exports = app;
