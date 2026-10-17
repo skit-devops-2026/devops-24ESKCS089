@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rescue-network-service
+  labels:
+    app: rescue-network
+    app.kubernetes.io/name: rescue-network
+    app.kubernetes.io/instance: rescue-network-production
+    app.kubernetes.io/part-of: devops-24eskcs089
+spec:
+  type: ClusterIP
+  selector:
+    app: rescue-network
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+      protocol: TCP
