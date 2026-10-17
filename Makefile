@@ -15,6 +15,7 @@ run:
 	cd client && npm start
 
 docker-build:
+	docker build -t devops-24eskcs089 .
 	docker build -t food-rescue-server ./server
 	docker build -t food-rescue-client ./client
 
