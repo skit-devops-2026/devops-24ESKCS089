@@ -1,9 +1,18 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body;
+
+        // Check if database is connected
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled."
+            });
+        }
 
         // Check if all required fields are provided
         if (!name || !email || !password || !phone) {
@@ -33,8 +42,22 @@ const registerUser = async (req, res) => {
             role: role || "DONOR"
         });
 
+        // Create JWT token
+        const jwtSecret = process.env.JWT_SECRET || "rescue_network_default_jwt_secret_key";
+        const token = jwt.sign(
+            {
+                userId: user._id,
+                role: user.role
+            },
+            jwtSecret,
+            {
+                expiresIn: "1d"
+            }
+        );
+
         res.status(201).json({
             message: "User registered successfully",
+            token,
             user: {
                 id: user._id,
                 name: user.name,
@@ -48,7 +71,7 @@ const registerUser = async (req, res) => {
         console.error("Registration error:", error.message);
 
         res.status(500).json({
-            message: "Server error"
+            message: error.message || "Server error"
         });
     }
 };
@@ -56,6 +79,13 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Check if database is connected
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled."
+            });
+        }
 
         // Check if email and password are provided
         if (!email || !password) {
@@ -86,12 +116,13 @@ const loginUser = async (req, res) => {
         }
 
         // Create JWT token
+        const jwtSecret = process.env.JWT_SECRET || "rescue_network_default_jwt_secret_key";
         const token = jwt.sign(
             {
                 userId: user._id,
                 role: user.role
             },
-            process.env.JWT_SECRET,
+            jwtSecret,
             {
                 expiresIn: "1d"
             }
@@ -113,7 +144,7 @@ const loginUser = async (req, res) => {
         console.error("Login error:", error.message);
 
         res.status(500).json({
-            message: "Server error"
+            message: error.message || "Server error"
         });
     }
 };

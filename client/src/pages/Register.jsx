@@ -20,13 +20,16 @@ export default function Register() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const res = await registerUser(formData);
-      login(res.data.user, res.data.token);
-      navigate("/dashboard");
+      if (res.data.token && res.data.user) {
+        login(res.data.user, res.data.token);
+        navigate("/dashboard");
+      } else {
+        navigate("/login");
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed.");
+      setError(err.response?.data?.message || err.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
