@@ -1,8 +1,14 @@
+const mongoose = require("mongoose");
 const Donation = require("../models/Donation");
 
 // Create a new donation
 const createDonation = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled and MONGODB_URI is configured."
+            });
+        }
         const {
             title,
             description,
@@ -50,6 +56,13 @@ const createDonation = async (req, res) => {
 // Get all available donations
 const getAvailableDonations = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json({
+                count: 0,
+                donations: []
+            });
+        }
+
         const donations = await Donation.find({ status: "AVAILABLE" })
             .populate("donor", "name email phone")
             .sort({ createdAt: -1 });
@@ -67,6 +80,13 @@ const getAvailableDonations = async (req, res) => {
 // Get donations created by the logged-in donor
 const getMyDonations = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json({
+                count: 0,
+                donations: []
+            });
+        }
+
         const donations = await Donation.find({
             donor: req.user.userId
         }).sort({ createdAt: -1 });
