@@ -29,11 +29,12 @@ make run
 
 ## Live URL
 
-Deployment pending (to be added once M5 is completed).
+- **Web Application / API**: https://devops-24eskcs089.onrender.com
+- **Health Endpoint**: https://devops-24eskcs089.onrender.com/health
 
 ## Health endpoint
 
-`GET /health` returns the running commit SHA. See `Makefile` and the milestone
+`GET /health` returns the running commit SHA along with uptime, database status, and memory diagnostics. See `Makefile` and the milestone
 sheet for why this is required.
 
 ---
@@ -119,27 +120,51 @@ The container image is configured for automated build and publication to GitHub 
 
 ## 5. Live Deployment
 
-The application is prepared for zero-downtime deployment on container hosting platforms such as Render or Railway.
+The application is deployed live on Render as a containerized web service.
 
 - **Deployment Specification**: [render.yaml](file:///render.yaml) Infrastructure-as-Code Blueprint defining the Docker web service, health check path, port binding, and environment schema.
 - **Configured Health Path**: `/health`
 - **Dynamic Port**: Binds to `$PORT` environment variable provided by host environment.
-- **Deployment Status**: Infrastructure Blueprint committed. Public URL creation requires connecting the repository to a Render/Railway workspace with an active user account.
+- **Live URL**: https://devops-24eskcs089.onrender.com
+- **Health Check URL**: https://devops-24eskcs089.onrender.com/health
+- **Deployment Status**: Active and Live on Render (`Oregon` region).
+
+### Deployment Verification Screenshot
+
+![Deployment Screenshot](docs/deployment-screenshot.png)
 
 ---
 
-## 6. Health Endpoint (`GET /health`)
+## 6. Advanced Health Endpoint (`GET /health`)
 
-Implemented in [server/server.js](file:///server/server.js#L68-L74) and verified via automated test suite.
+Implemented in [server/server.js](file:///server/server.js) and verified via automated test suite.
 
-- **URL**: `http://localhost:5000/health`
+- **URL**: `http://localhost:5000/health` (or `https://devops-24eskcs089.onrender.com/health`)
 - **HTTP Method**: `GET`
 - **Status Code**: `200 OK`
 - **Payload**:
   ```json
   {
     "status": "ok",
-    "commit": "bf48137"
+    "commit": "f46fb97",
+    "timestamp": "2026-10-18T13:10:00.000Z",
+    "uptime": "120s",
+    "environment": "production",
+    "checks": {
+      "database": {
+        "status": "connected",
+        "connected": true
+      },
+      "memory": {
+        "heapUsedMB": 38.42,
+        "heapTotalMB": 52.18,
+        "rssMB": 74.65
+      },
+      "process": {
+        "nodeVersion": "v20.x.x",
+        "pid": 1
+      }
+    }
   }
   ```
 
@@ -270,4 +295,4 @@ kubectl apply --dry-run=client -f k8s/
 
 1. **Docker Daemon in Local Environment**: Docker Desktop is not installed locally on this host machine. All Docker files ([Dockerfile](file:///Dockerfile), [docker-compose.yml](file:///docker-compose.yml), `.dockerignore`) have been statically validated; container builds and GHCR image publishing are handled by the GitHub Actions CI pipeline ([.github/workflows/ci.yml](file:///.github/workflows/ci.yml)).
 2. **Kubernetes Cluster**: Manifests ([k8s/deployment.yaml](file:///k8s/deployment.yaml), [k8s/service.yaml](file:///k8s/service.yaml)) are structurally verified and syntactically valid. Cluster deployment requires an active `kubectl` context.
-3. **Live Hosting Platform Account**: [render.yaml](file:///render.yaml) is configured for immediate one-click deployment. Linking the repository to an active Render or Railway account will provision the live URL and enable capturing [docs/deployment-screenshot.png](file:///docs/deployment-screenshot.png).
+3. **Live Hosting Platform Account**: Deployed live on Render at https://devops-24eskcs089.onrender.com. Proof of deployment is captured and committed under [docs/deployment-screenshot.png](file:///docs/deployment-screenshot.png).

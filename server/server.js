@@ -64,11 +64,41 @@ app.get("/", (req, res) => {
     res.json({ message: "Rescue Network API is running!" });
 });
 
-// Health check endpoint
+// Advanced health check endpoint
 app.get("/health", (req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const dbStatusMap = {
+        0: "disconnected",
+        1: "connected",
+        2: "connecting",
+        3: "disconnecting"
+    };
+    const dbStatus = dbStatusMap[dbState] || "unknown";
+
+    const mem = process.memoryUsage();
+    const toMB = (bytes) => +(bytes / 1024 / 1024).toFixed(2);
+
     res.status(200).json({
         status: "ok",
-        commit: process.env.GITHUB_SHA || "local"
+        commit: process.env.GITHUB_SHA || "local",
+        timestamp: new Date().toISOString(),
+        uptime: `${Math.floor(process.uptime())}s`,
+        environment: process.env.NODE_ENV || "development",
+        checks: {
+            database: {
+                status: dbStatus,
+                connected: dbState === 1
+            },
+            memory: {
+                heapUsedMB: toMB(mem.heapUsed),
+                heapTotalMB: toMB(mem.heapTotal),
+                rssMB: toMB(mem.rss)
+            },
+            process: {
+                nodeVersion: process.version,
+                pid: process.pid
+            }
+        }
     });
 });
 
