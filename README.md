@@ -29,8 +29,7 @@ make run
 
 ## Live URL
 
-- **Web Application / API**: https://devops-24eskcs089.onrender.com
-- **Health Endpoint**: https://devops-24eskcs089.onrender.com/health
+https://devops-24eskcs089.onrender.com
 
 ## Health endpoint
 
