@@ -114,15 +114,28 @@ app.get("/metrics", async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
+function sanitizeMongoUri(uri) {
+    if (!uri) return uri;
+    // Auto-encode unescaped @ in password (e.g. user:pass@@host -> user:pass%40@host)
+    if (uri.includes("@@")) {
+        return uri.replace("@@", "%40@");
+    }
+    return uri;
+}
+
 if (require.main === module) {
     if (process.env.MONGODB_URI) {
+        const mongoUri = sanitizeMongoUri(process.env.MONGODB_URI);
         mongoose
-            .connect(process.env.MONGODB_URI)
+            .connect(mongoUri, {
+                serverSelectionTimeoutMS: 5000
+            })
             .then(() => {
                 console.log("MongoDB connected successfully!");
             })
             .catch((error) => {
                 console.error("MongoDB connection failed:", error.message);
+                console.log("Tip: Check MongoDB Atlas credentials and verify IP whitelist allows 0.0.0.0/0 under Network Access.");
             });
     } else {
         console.log("No MONGODB_URI configured, running without persistent database.");
