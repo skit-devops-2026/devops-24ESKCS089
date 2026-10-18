@@ -11,9 +11,17 @@ describe("Rescue Network API", () => {
         );
     });
     test("GET /health should return health status", async () => {
-    const response = await request(app).get("/health");
+        const response = await request(app).get("/health");
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body.status).toBe("ok");
-});
+        expect(response.statusCode).toBe(200);
+        expect(response.body.status).toBe("ok");
+    });
+
+    test("GET /metrics should return Prometheus metrics", async () => {
+        const response = await request(app).get("/metrics");
+
+        expect(response.statusCode).toBe(200);
+        expect(response.headers["content-type"]).toMatch(/text\/plain/);
+        expect(response.text).toContain("http_requests_total");
+    });
 });
