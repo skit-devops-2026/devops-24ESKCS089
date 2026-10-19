@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const promClient = require("prom-client");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 require("dotenv").config();
 
 // Initialize Prometheus metrics collection
@@ -123,23 +125,52 @@ function sanitizeMongoUri(uri) {
     return uri;
 }
 
-if (require.main === module) {
-    if (process.env.MONGODB_URI) {
-        const mongoUri = sanitizeMongoUri(process.env.MONGODB_URI);
-        mongoose
-            .connect(mongoUri, {
-                serverSelectionTimeoutMS: 5000
-            })
-            .then(() => {
-                console.log("MongoDB connected successfully!");
-            })
-            .catch((error) => {
-                console.error("MongoDB connection failed:", error.message);
-                console.log("Tip: Check MongoDB Atlas credentials and verify IP whitelist allows 0.0.0.0/0 under Network Access.");
-            });
-    } else {
-        console.log("No MONGODB_URI configured, running without persistent database.");
+let isConnecting = false;
+let retryTimer = null;
+
+const connectWithRetry = async (retryDelay = 5000) => {
+    if (mongoose.connection.readyState === 1 || isConnecting) {
+        return;
     }
+
+    const rawUri = process.env.MONGODB_URI;
+    if (!rawUri) {
+        console.log("No MONGODB_URI configured, running without persistent database.");
+        return;
+    }
+
+    const mongoUri = sanitizeMongoUri(rawUri);
+    isConnecting = true;
+    try {
+        await mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 20000
+        });
+        console.log("MongoDB connected successfully!");
+    } catch (error) {
+        console.error("MongoDB connection failed:", error.message);
+        console.log("Tip: Check MongoDB Atlas credentials and verify IP whitelist allows 0.0.0.0/0 under Network Access.");
+        console.log(`Retrying MongoDB connection in ${retryDelay / 1000}s...`);
+        clearTimeout(retryTimer);
+        retryTimer = setTimeout(() => {
+            isConnecting = false;
+            connectWithRetry(Math.min(retryDelay * 1.5, 30000));
+        }, retryDelay);
+    } finally {
+        isConnecting = false;
+    }
+};
+
+mongoose.connection.on("disconnected", () => {
+    console.warn("MongoDB disconnected. Attempting reconnection...");
+    connectWithRetry();
+});
+
+mongoose.connection.on("error", (err) => {
+    console.error("MongoDB connection error:", err.message);
+});
+
+if (require.main === module) {
+    connectWithRetry();
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);

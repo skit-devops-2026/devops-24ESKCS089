@@ -22,6 +22,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/pickups" element={<Dashboard />} />
             <Route path="/create-donation" element={<CreateDonation />} />
           </Routes>
         </main>

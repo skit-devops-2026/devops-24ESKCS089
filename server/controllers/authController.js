@@ -3,11 +3,25 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
+const waitForDb = async (timeoutMs = 4000) => {
+    if (mongoose.connection.readyState === 1) return true;
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        if (mongoose.connection.readyState === 1) return true;
+    }
+    return false;
+};
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body;
 
-        // Check if database is connected
+        // Check if database is connected, allow brief grace period for connection
+        if (mongoose.connection.readyState !== 1) {
+            await waitForDb(4000);
+        }
+
         if (mongoose.connection.readyState !== 1) {
             return res.status(503).json({
                 message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled."
@@ -80,7 +94,11 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if database is connected
+        // Check if database is connected, allow brief grace period for connection
+        if (mongoose.connection.readyState !== 1) {
+            await waitForDb(4000);
+        }
+
         if (mongoose.connection.readyState !== 1) {
             return res.status(503).json({
                 message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled."

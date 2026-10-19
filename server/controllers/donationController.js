@@ -1,9 +1,22 @@
 const mongoose = require("mongoose");
 const Donation = require("../models/Donation");
 
+const waitForDb = async (timeoutMs = 4000) => {
+    if (mongoose.connection.readyState === 1) return true;
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        if (mongoose.connection.readyState === 1) return true;
+    }
+    return false;
+};
+
 // Create a new donation
 const createDonation = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            await waitForDb(4000);
+        }
         if (mongoose.connection.readyState !== 1) {
             return res.status(503).json({
                 message: "Database unavailable: MongoDB is not connected. Please ensure MongoDB Atlas IP whitelist (0.0.0.0/0) is enabled and MONGODB_URI is configured."
