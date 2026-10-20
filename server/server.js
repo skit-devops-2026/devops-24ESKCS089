@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const promClient = require("prom-client");
 const path = require("path");
+const fs = require("fs");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 require("dotenv").config();
 
@@ -61,10 +62,12 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/pickups", pickupRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Test route
-app.get("/", (req, res) => {
-    res.json({ message: "Rescue Network API is running!" });
-});
+// API test route for automated testing
+if (process.env.NODE_ENV === "test") {
+    app.get("/", (req, res) => {
+        res.json({ message: "Rescue Network API is running!" });
+    });
+}
 
 // Advanced health check endpoint
 app.get("/health", (req, res) => {
@@ -113,6 +116,22 @@ app.get("/metrics", async (req, res) => {
         res.status(500).end(error.message);
     }
 });
+
+// Serve static frontend assets in production / containerized environments
+const clientDistPath = path.resolve(__dirname, "../client/dist");
+if (fs.existsSync(clientDistPath) && process.env.NODE_ENV !== "test") {
+    app.use(express.static(clientDistPath));
+    app.get("*", (req, res, next) => {
+        if (req.path.startsWith("/api") || req.path === "/health" || req.path === "/metrics") {
+            return next();
+        }
+        res.sendFile(path.join(clientDistPath, "index.html"));
+    });
+} else if (process.env.NODE_ENV !== "test") {
+    app.get("/", (req, res) => {
+        res.json({ message: "Rescue Network API is running!" });
+    });
+}
 
 const PORT = process.env.PORT || 5000;
 
