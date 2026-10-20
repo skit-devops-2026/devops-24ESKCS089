@@ -103,7 +103,7 @@ export default function Donations() {
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
             {user?.role === "DONOR" && (
               <Link to="/create-donation" className="btn btn-primary btn-lg">
-                <PlusCircle size={18} /> Post Surplus Food
+                <PlusCircle size={18} /> Donate Surplus
               </Link>
             )}
             {!user && (

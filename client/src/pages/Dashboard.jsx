@@ -282,7 +282,7 @@ export default function Dashboard() {
 
             {user?.role === "DONOR" && (
               <Link to="/create-donation" className="btn btn-primary">
-                <PlusCircle size={16} /> Post Surplus Donation
+                <PlusCircle size={16} /> Donate Surplus
               </Link>
             )}
           </div>

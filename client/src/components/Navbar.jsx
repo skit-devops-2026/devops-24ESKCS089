@@ -95,7 +95,7 @@ export default function Navbar() {
 
           {user?.role === "DONOR" && (
             <Link to="/create-donation" className="btn btn-primary">
-              <PlusCircle size={16} /> Donate Food
+              <PlusCircle size={16} /> Donate Surplus
             </Link>
           )}
         </nav>
