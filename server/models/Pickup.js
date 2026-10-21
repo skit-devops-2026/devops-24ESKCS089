@@ -59,4 +59,9 @@ const pickupSchema = new mongoose.Schema(
     }
 );
 
+// Optimize query performance for courier runs, driver pickups, and scheduling
+pickupSchema.index({ deliveryStatus: 1, pickupMethod: 1 });
+pickupSchema.index({ deliveryPartner: 1, deliveryStatus: 1 });
+pickupSchema.index({ scheduledDate: 1 });
+
 module.exports = mongoose.model("Pickup", pickupSchema);

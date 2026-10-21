@@ -13,6 +13,7 @@ services:
       - PORT=5000
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/rescue_network
+      - JWT_SECRET=${JWT_SECRET:-rescue_network_default_jwt_secret_key}
     depends_on:
       mongodb:
         condition: service_healthy

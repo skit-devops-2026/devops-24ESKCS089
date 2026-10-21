@@ -37,4 +37,9 @@ const requestSchema = new mongoose.Schema(
     }
 );
 
+// Optimize queries for aid requests and NGO dashboard lookups
+requestSchema.index({ donation: 1, ngo: 1 });
+requestSchema.index({ status: 1 });
+requestSchema.index({ ngo: 1, createdAt: -1 });
+
 module.exports = mongoose.model("Request", requestSchema);

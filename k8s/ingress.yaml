@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rescue-network-ingress
+  labels:
+    app: rescue-network
+    app.kubernetes.io/name: rescue-network
+    app.kubernetes.io/instance: rescue-network-production
+    app.kubernetes.io/part-of: devops-24eskcs089
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+    - host: rescue-network.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rescue-network-service
+                port:
+                  number: 80

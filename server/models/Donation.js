@@ -77,4 +77,8 @@ const donationSchema = new mongoose.Schema(
     }
 );
 
+// Optimize query performance for listings, status filters, and donor dashboard
+donationSchema.index({ status: 1, category: 1 });
+donationSchema.index({ donor: 1, createdAt: -1 });
+
 module.exports = mongoose.model("Donation", donationSchema);

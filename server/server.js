@@ -2,13 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const promClient = require("prom-client");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const path = require("path");
 const fs = require("fs");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 require("dotenv").config();
 
 // Initialize Prometheus metrics collection
-promClient.collectDefaultMetrics({ prefix: "food_rescue_" });
+promClient.collectDefaultMetrics({ prefix: "rescue_network_" });
 
 const httpRequestsTotal = new promClient.Counter({
     name: "http_requests_total",
@@ -31,8 +33,41 @@ const pickupRoutes = require("./routes/pickupRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 
+// Secure HTTP response headers
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false
+    })
+);
+
 app.use(cors());
 app.use(express.json());
+
+// Rate limiters (bypassed in test environment)
+const isTestEnv = process.env.NODE_ENV === "test";
+
+const generalLimiter = isTestEnv
+    ? (req, res, next) => next()
+    : rateLimit({
+          windowMs: 15 * 60 * 1000,
+          max: 300,
+          standardHeaders: true,
+          legacyHeaders: false,
+          message: { message: "Too many requests, please try again later." }
+      });
+
+const authLimiter = isTestEnv
+    ? (req, res, next) => next()
+    : rateLimit({
+          windowMs: 15 * 60 * 1000,
+          max: 30,
+          standardHeaders: true,
+          legacyHeaders: false,
+          message: { message: "Too many login/registration attempts. Please wait 15 minutes." }
+      });
+
+app.use(generalLimiter);
 
 // Metrics middleware to track request rate and latency
 app.use((req, res, next) => {
@@ -55,7 +90,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/donations", donationRoutes);
 app.use("/api/requests", requestRoutes);
