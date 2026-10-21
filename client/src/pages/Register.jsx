@@ -64,7 +64,7 @@ export default function Register() {
           </div>
           <h2 style={{ fontSize: "1.75rem", marginBottom: "0.4rem" }}>Join the Rescue Network</h2>
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-            Select your role to connect and eliminate surplus food waste
+            Select your role to connect and eliminate surplus waste
           </p>
         </div>
 

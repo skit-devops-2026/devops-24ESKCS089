@@ -431,7 +431,7 @@ export default function Dashboard() {
                 <div className="metric-card indigo">
                   <div className="metric-icon-wrap indigo"><Heart size={22} /></div>
                   <div className="metric-value">{donorTotalCount * 12}</div>
-                  <div className="metric-label">Estimated Meals Saved</div>
+                  <div className="metric-label">Surplus Items Rescued</div>
                   <div className="metric-subtext">Direct community impact</div>
                 </div>
               </div>
@@ -650,7 +650,7 @@ export default function Dashboard() {
                   <div className="metric-icon-wrap blue"><Heart size={22} /></div>
                   <div className="metric-value">{ngoCompletedRequests * 15}</div>
                   <div className="metric-label">Families Supported</div>
-                  <div className="metric-subtext">Verified community meals</div>
+                  <div className="metric-subtext">Verified community aid</div>
                 </div>
               </div>
 
@@ -936,7 +936,7 @@ export default function Dashboard() {
                         <div key={job._id} style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", padding: "1rem" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
                             <div>
-                              <strong>{job.request?.donation?.title || "Food Package"}</strong>
+                              <strong>{job.request?.donation?.title || "Surplus Package"}</strong>
                               <div style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
                                 Pickup: {job.pickupAddress}
                               </div>
@@ -982,7 +982,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                         <h4 style={{ fontSize: "1.15rem", marginBottom: "0.4rem" }}>
-                          {job.request?.donation?.title || "Food Package Rescue"}
+                          {job.request?.donation?.title || "Surplus Package Rescue"}
                         </h4>
                         <div style={{ background: "var(--canvas-subtle)", padding: "0.75rem", borderRadius: "var(--radius-sm)", fontSize: "0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                           <div><strong>Pickup Location:</strong> {job.pickupAddress}</div>
@@ -1052,7 +1052,7 @@ export default function Dashboard() {
                     .map((p) => (
                       <div key={p._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", background: "var(--canvas-subtle)", borderRadius: "var(--radius-sm)" }}>
                         <div>
-                          <div style={{ fontWeight: "700" }}>{p.request?.donation?.title || "Food Delivery"}</div>
+                          <div style={{ fontWeight: "700" }}>{p.request?.donation?.title || "Surplus Delivery"}</div>
                           <div style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
                             Delivered to: {p.request?.ngo?.name} • Pickup: {p.pickupAddress}
                           </div>

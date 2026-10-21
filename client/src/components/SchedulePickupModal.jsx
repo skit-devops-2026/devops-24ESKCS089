@@ -143,7 +143,7 @@ export default function SchedulePickupModal({ request, onClose, onSubmit }) {
               rows={2}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="e.g. Call upon arrival, bring insulated containers..."
+              placeholder="e.g. Call upon arrival, ground floor entrance, handling tips..."
             />
           </div>
 

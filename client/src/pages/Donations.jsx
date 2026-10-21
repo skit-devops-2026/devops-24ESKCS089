@@ -97,7 +97,7 @@ export default function Donations() {
           </h1>
 
           <p style={{ color: "#cbd5e1", fontSize: "1.1rem", marginBottom: "1.75rem", lineHeight: 1.6 }}>
-            Connecting donors, verified NGOs, and delivery partners in real time to rescue food and eliminate waste.
+            Connecting donors, verified NGOs, and delivery partners in real time to rescue surplus and eliminate waste.
           </p>
 
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
@@ -134,7 +134,7 @@ export default function Donations() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search food, groceries, items or location..."
+                placeholder="Search surplus items, goods, essentials or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

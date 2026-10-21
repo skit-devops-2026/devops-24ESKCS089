@@ -41,7 +41,7 @@ export function getReputationTier(role, count = 0) {
     return { stars: 5, label: "Humanitarian Pillar", icon: Trophy, color: "#d97706", nextTarget: null, prevTarget: 13 };
   }
   if (num >= 7) {
-    return { stars: 4, label: "Food Security Ally", icon: Award, color: "#f59e0b", nextTarget: 13, prevTarget: 7 };
+    return { stars: 4, label: "Community Aid Ally", icon: Award, color: "#f59e0b", nextTarget: 13, prevTarget: 7 };
   }
   if (num >= 3) {
     return { stars: 3, label: "Active Distributor", icon: Heart, color: "#059669", nextTarget: 7, prevTarget: 3 };

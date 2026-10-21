@@ -34,7 +34,7 @@ export default function PickupTracker({ pickup, onStatusUpdate, isCourier = fals
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <span style={{ fontWeight: "700", fontSize: "1.05rem", color: "var(--secondary)" }}>
-              {pickup.request?.donation?.title || "Food Rescue Package"}
+              {pickup.request?.donation?.title || "Surplus Rescue Package"}
             </span>
             <span className={`badge ${currentStatus === "DELIVERED" ? "badge-completed" : currentStatus === "PICKED_UP" ? "badge-in-transit" : "badge-requested"}`}>
               {currentStatus}

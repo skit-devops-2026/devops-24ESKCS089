@@ -55,7 +55,7 @@ export default function Navbar() {
               Rescue<span style={{ color: "var(--primary)" }}>Network</span>
             </span>
             <div style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-muted)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              Food & Aid Bridge
+              Surplus & Aid Bridge
             </div>
           </div>
         </Link>

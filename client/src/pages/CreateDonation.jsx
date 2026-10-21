@@ -143,7 +143,7 @@ export default function CreateDonation() {
             <input
               type="text"
               required
-              placeholder="e.g. 50 Packaged Vegetarian Meals, Bakery Loaves"
+              placeholder="e.g. 50 Packaged Meals, Winter Clothes, Study Tables, Laptops"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
@@ -151,11 +151,11 @@ export default function CreateDonation() {
 
           {/* Description */}
           <div>
-            <label>Description, Ingredients & Preparation</label>
+            <label>Description & Item Details</label>
             <textarea
               required
               rows={3}
-              placeholder="Provide details about condition, expiry, allergen warnings, or handling tips..."
+              placeholder="Provide details about condition, specifications, expiry (if applicable), or handling tips..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
@@ -168,7 +168,7 @@ export default function CreateDonation() {
               <input
                 type="text"
                 required
-                placeholder="e.g. 25 kg / 50 boxes"
+                placeholder="e.g. 25 kg / 50 boxes / 10 units"
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
               />
@@ -179,7 +179,7 @@ export default function CreateDonation() {
                 value={formData.condition}
                 onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
               >
-                <option value="GOOD">Good / Freshly Prepared</option>
+                <option value="GOOD">Good Condition / Reusable</option>
                 <option value="NEW">Brand New / Sealed</option>
                 <option value="USED">Gently Used</option>
               </select>
@@ -202,7 +202,7 @@ export default function CreateDonation() {
               <input
                 type="text"
                 required
-                placeholder="e.g. 15 Community Way, Kitchen 2"
+                placeholder="e.g. 15 Community Way, Building A"
                 value={formData.pickupAddress}
                 onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
               />
