@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { HeartHandshake, LayoutDashboard, PlusCircle, LogOut, LogIn, UserPlus } from "lucide-react";
+import { HeartHandshake, LayoutDashboard, PlusCircle, LogOut, LogIn, UserPlus, Compass } from "lucide-react";
 import StarRating from "./StarRating";
 
 export default function Navbar() {
@@ -16,6 +16,19 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
+  const getRoleBadgeStyle = (role) => {
+    switch (role) {
+      case "DONOR":
+        return { background: "var(--primary-subtle)", color: "var(--primary)", borderColor: "var(--primary-border)" };
+      case "NGO":
+        return { background: "var(--gold-subtle)", color: "#b45309", borderColor: "var(--gold-border)" };
+      case "DELIVERY":
+        return { background: "var(--indigo-subtle)", color: "var(--indigo)", borderColor: "var(--indigo-border)" };
+      default:
+        return { background: "var(--canvas-subtle)", color: "var(--secondary)", borderColor: "var(--border)" };
+    }
+  };
+
   return (
     <header className="glass-panel" style={{
       position: "sticky",
@@ -25,8 +38,11 @@ export default function Navbar() {
       borderLeft: "none",
       borderRight: "none",
       borderRadius: 0,
-      background: "rgba(255, 255, 255, 0.92)",
-      boxShadow: "0 1px 3px rgba(15, 23, 42, 0.06)"
+      background: "rgba(255, 255, 255, 0.94)",
+      backdropFilter: "blur(14px)",
+      WebkitBackdropFilter: "blur(14px)",
+      borderBottom: "1px solid rgba(16, 185, 129, 0.2)",
+      boxShadow: "0 2px 10px rgba(15, 23, 42, 0.04)"
     }}>
       <div className="container" style={{
         display: "flex",
@@ -36,22 +52,23 @@ export default function Navbar() {
       }}>
         
         {/* Brand Logo */}
-        <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
+        <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.65rem", textDecoration: "none" }}>
           <div style={{
             background: "linear-gradient(135deg, var(--primary) 0%, #047857 100%)",
             color: "white",
-            width: "38px",
-            height: "38px",
+            width: "40px",
+            height: "40px",
             borderRadius: "var(--radius-sm)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 8px var(--primary-glow)"
+            boxShadow: "0 4px 12px var(--primary-glow)",
+            transition: "transform 0.2s ease"
           }}>
-            <HeartHandshake size={22} />
+            <HeartHandshake size={23} />
           </div>
           <div>
-            <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--secondary)", letterSpacing: "-0.03em" }}>
+            <span style={{ fontSize: "1.32rem", fontWeight: "800", color: "var(--secondary)", letterSpacing: "-0.03em" }}>
               Rescue<span style={{ color: "var(--primary)" }}>Network</span>
             </span>
             <div style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-muted)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
@@ -69,10 +86,11 @@ export default function Navbar() {
               borderColor: isActive("/donations") || isActive("/") ? "var(--primary)" : "transparent",
               background: isActive("/donations") || isActive("/") ? "var(--primary-subtle)" : "transparent",
               color: isActive("/donations") || isActive("/") ? "var(--primary)" : "var(--text-main)",
-              fontWeight: "600"
+              fontWeight: "600",
+              gap: "0.4rem"
             }}
           >
-            Explore Surplus
+            <Compass size={16} /> Explore Surplus
           </Link>
 
           {user && (
@@ -85,7 +103,8 @@ export default function Navbar() {
                 color: isActive("/dashboard") ? "var(--primary)" : "var(--text-main)",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.4rem"
+                gap: "0.4rem",
+                fontWeight: "600"
               }}
             >
               <LayoutDashboard size={16} />
@@ -94,7 +113,7 @@ export default function Navbar() {
           )}
 
           {user?.role === "DONOR" && (
-            <Link to="/create-donation" className="btn btn-primary">
+            <Link to="/create-donation" className="btn btn-primary" style={{ boxShadow: "0 2px 10px var(--primary-glow)" }}>
               <PlusCircle size={16} /> Donate Surplus
             </Link>
           )}
@@ -114,19 +133,27 @@ export default function Navbar() {
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               {/* User Identity & Star Rating Badge */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: "0.88rem", fontWeight: "700", color: "var(--secondary)" }}>
                     {user.name}
                   </div>
-                  <span className="badge badge-role" style={{ fontSize: "0.68rem", padding: "0.15rem 0.5rem" }}>
+                  <span
+                    className="badge"
+                    style={{
+                      fontSize: "0.68rem",
+                      padding: "0.15rem 0.55rem",
+                      border: "1px solid",
+                      ...getRoleBadgeStyle(user.role)
+                    }}
+                  >
                     {user.role}
                   </span>
                 </div>
 
                 <div style={{
-                  width: "36px",
-                  height: "36px",
+                  width: "38px",
+                  height: "38px",
                   borderRadius: "var(--radius-full)",
                   background: "linear-gradient(135deg, #059669 0%, #0f172a 100%)",
                   color: "white",
@@ -134,12 +161,14 @@ export default function Navbar() {
                   alignItems: "center",
                   justifyContent: "center",
                   fontWeight: "800",
-                  fontSize: "0.95rem"
+                  fontSize: "0.95rem",
+                  boxShadow: "0 2px 8px rgba(5, 150, 105, 0.25)"
                 }}>
                   {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                 </div>
               </div>
 
+              {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 className="btn btn-outline"
@@ -151,7 +180,6 @@ export default function Navbar() {
             </div>
           )}
         </div>
-
       </div>
     </header>
   );

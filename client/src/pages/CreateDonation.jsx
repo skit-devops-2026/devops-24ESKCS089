@@ -108,32 +108,37 @@ export default function CreateDonation() {
           
           {/* Category Picker */}
           <div>
-            <label>Item Category</label>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.6rem" }}>
-              {categories.map((cat) => (
-                <div
-                  key={cat.key}
-                  onClick={() => setFormData({ ...formData, category: cat.key })}
-                  style={{
-                    border: `1.5px solid ${formData.category === cat.key ? "var(--primary)" : "var(--border)"}`,
-                    background: formData.category === cat.key ? "var(--primary-subtle)" : "white",
-                    padding: "0.65rem 0.75rem",
-                    borderRadius: "var(--radius-sm)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.45rem",
-                    fontSize: "0.85rem",
-                    fontWeight: "600",
-                    transition: "all 0.2s"
-                  }}
-                >
-                  <span style={{ fontSize: "1.1rem" }}>{cat.icon}</span>
-                  <span style={{ color: formData.category === cat.key ? "var(--primary)" : "var(--text-main)" }}>
-                    {cat.label.split(" ")[0]}
-                  </span>
-                </div>
-              ))}
+            <label style={{ fontWeight: "700", marginBottom: "0.5rem", display: "block" }}>Item Category</label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.65rem" }}>
+              {categories.map((cat) => {
+                const isSelected = formData.category === cat.key;
+                return (
+                  <div
+                    key={cat.key}
+                    onClick={() => setFormData({ ...formData, category: cat.key })}
+                    style={{
+                      border: `2px solid ${isSelected ? "var(--primary)" : "var(--border)"}`,
+                      background: isSelected ? "var(--primary-subtle)" : "white",
+                      padding: "0.75rem 0.85rem",
+                      borderRadius: "var(--radius-sm)",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      fontSize: "0.85rem",
+                      fontWeight: "700",
+                      transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                      boxShadow: isSelected ? "0 2px 8px var(--primary-glow)" : "none"
+                    }}
+                  >
+                    <span style={{ fontSize: "1.2rem" }}>{cat.icon}</span>
+                    <span style={{ color: isSelected ? "var(--primary)" : "var(--text-main)", flex: 1 }}>
+                      {cat.label.split(" ")[0]}
+                    </span>
+                    {isSelected && <CheckCircle2 size={15} style={{ color: "var(--primary)" }} />}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -214,8 +219,9 @@ export default function CreateDonation() {
             type="submit"
             disabled={loading}
             className="btn btn-primary btn-lg"
-            style={{ marginTop: "0.5rem", width: "100%" }}
+            style={{ marginTop: "0.5rem", width: "100%", gap: "0.5rem", boxShadow: "0 4px 14px var(--primary-glow)" }}
           >
+            <Sparkles size={18} />
             {loading ? "Publishing to Network..." : "Publish Surplus Donation"}
           </button>
         </form>
