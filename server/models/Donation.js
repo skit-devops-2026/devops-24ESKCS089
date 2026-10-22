@@ -54,6 +54,29 @@ const donationSchema = new mongoose.Schema(
             required: true
         },
 
+        city: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        state: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        pincode: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        coordinates: {
+            lat: { type: Number, default: null },
+            lng: { type: Number, default: null }
+        },
+
         availableUntil: {
             type: Date,
             required: true

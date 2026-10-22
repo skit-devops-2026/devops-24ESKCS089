@@ -1,5 +1,6 @@
 import React from "react";
-import { CheckCircle2, Clock, Truck, PackageCheck, AlertCircle, MapPin, Calendar, DollarSign } from "lucide-react";
+import { CheckCircle2, Clock, Truck, PackageCheck, AlertCircle, MapPin, Calendar, DollarSign, ExternalLink } from "lucide-react";
+import { getMapNavigationUrl } from "../services/locationService";
 
 export default function PickupTracker({ pickup, onStatusUpdate, isCourier = false }) {
   if (!pickup) return null;
@@ -110,12 +111,51 @@ export default function PickupTracker({ pickup, onStatusUpdate, isCourier = fals
         gap: "0.6rem",
         marginTop: "1rem"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <MapPin size={15} style={{ color: "var(--primary)" }} />
-          <span><strong>Pickup:</strong> {pickup.pickupAddress}</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.4rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", minWidth: 0 }}>
+              <MapPin size={15} style={{ color: "var(--primary)", flexShrink: 0 }} />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <strong>Pickup:</strong> {pickup.pickupAddress}
+              </span>
+            </div>
+            <a
+              href={getMapNavigationUrl(pickup.coordinates || pickup.pickupAddress)}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: "0.72rem",
+                color: "var(--primary)",
+                fontWeight: "700",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "2px",
+                flexShrink: 0
+              }}
+              title="Navigate in Google Maps"
+            >
+              Directions <ExternalLink size={10} />
+            </a>
+          </div>
+
+          {(pickup.city || pickup.state || pickup.pincode) && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", paddingLeft: "1.2rem" }}>
+              {(pickup.city || pickup.state) && (
+                <span style={{ fontSize: "0.7rem", background: "white", padding: "1px 5px", borderRadius: "var(--radius-xs)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+                  📍 {[pickup.city, pickup.state].filter(Boolean).join(", ")}
+                </span>
+              )}
+              {pickup.pincode && (
+                <span style={{ fontSize: "0.7rem", background: "var(--indigo-subtle)", color: "var(--indigo)", padding: "1px 5px", borderRadius: "var(--radius-xs)", fontWeight: "700" }}>
+                  PIN: {pickup.pincode}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <Calendar size={15} style={{ color: "var(--indigo)" }} />
+          <Calendar size={15} style={{ color: "var(--indigo)", flexShrink: 0 }} />
           <span><strong>Date:</strong> {pickup.scheduledDate ? new Date(pickup.scheduledDate).toLocaleString() : "TBD"}</span>
         </div>
         {pickup.request?.ngo?.name && (

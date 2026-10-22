@@ -22,6 +22,7 @@ import StarRating from "../components/StarRating";
 import PickupTracker from "../components/PickupTracker";
 import SchedulePickupModal from "../components/SchedulePickupModal";
 import Toast from "../components/Toast";
+import { getMapNavigationUrl } from "../services/locationService";
 import {
   LayoutDashboard,
   Package,
@@ -504,6 +505,8 @@ export default function Dashboard() {
                             <div style={{ fontWeight: "700", fontSize: "0.95rem" }}>{d.title}</div>
                             <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
                               {d.quantity} • {d.pickupAddress}
+                              {(d.city || d.state) && ` • ${[d.city, d.state].filter(Boolean).join(", ")}`}
+                              {d.pincode && ` (${d.pincode})`}
                             </div>
                           </div>
                           <span className={`badge ${d.status === "AVAILABLE" ? "badge-available" : d.status === "COMPLETED" ? "badge-completed" : "badge-requested"}`}>
@@ -746,7 +749,18 @@ export default function Dashboard() {
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.25rem" }}>
                   {data.availableDonations
-                    .filter((d) => !searchQuery || d.title.toLowerCase().includes(searchQuery.toLowerCase()) || d.pickupAddress.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .filter((d) => {
+                      if (!searchQuery) return true;
+                      const q = searchQuery.toLowerCase().trim();
+                      return (
+                        d.title?.toLowerCase().includes(q) ||
+                        d.description?.toLowerCase().includes(q) ||
+                        d.pickupAddress?.toLowerCase().includes(q) ||
+                        d.city?.toLowerCase().includes(q) ||
+                        d.state?.toLowerCase().includes(q) ||
+                        d.pincode?.toLowerCase().includes(q)
+                      );
+                    })
                     .map((item) => (
                       <div key={item._id} className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", border: "1px solid var(--border)" }}>
                         <div>
@@ -760,7 +774,22 @@ export default function Dashboard() {
                           </p>
                           <div style={{ background: "var(--canvas-subtle)", padding: "0.75rem", borderRadius: "var(--radius-sm)", fontSize: "0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                             <div><strong>Quantity:</strong> {item.quantity} ({item.condition || "GOOD"})</div>
-                            <div><strong>Pickup Address:</strong> {item.pickupAddress}</div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <div><strong>Pickup Address:</strong> {item.pickupAddress}</div>
+                              <a
+                                href={getMapNavigationUrl(item.coordinates || item.pickupAddress)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "var(--primary)", fontSize: "0.75rem", fontWeight: "700", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "2px" }}
+                              >
+                                Map <ExternalLink size={11} />
+                              </a>
+                            </div>
+                            {(item.city || item.state || item.pincode) && (
+                              <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                                📍 {[item.city, item.state].filter(Boolean).join(", ")} {item.pincode ? `• PIN: ${item.pincode}` : ""}
+                              </div>
+                            )}
                             <div><strong>Expires:</strong> {new Date(item.availableUntil).toLocaleDateString()}</div>
                             <div><strong>Donor:</strong> {item.donor?.name || "Verified Member"}</div>
                           </div>
@@ -939,6 +968,8 @@ export default function Dashboard() {
                               <strong>{job.request?.donation?.title || "Surplus Package"}</strong>
                               <div style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
                                 Pickup: {job.pickupAddress}
+                                {(job.city || job.state) && ` • ${[job.city, job.state].filter(Boolean).join(", ")}`}
+                                {job.pincode && ` (${job.pincode})`}
                               </div>
                             </div>
                             <span style={{ background: "var(--gold-subtle)", color: "#b45309", padding: "3px 8px", borderRadius: "var(--radius-sm)", fontWeight: "700", fontSize: "0.85rem" }}>
@@ -985,7 +1016,22 @@ export default function Dashboard() {
                           {job.request?.donation?.title || "Surplus Package Rescue"}
                         </h4>
                         <div style={{ background: "var(--canvas-subtle)", padding: "0.75rem", borderRadius: "var(--radius-sm)", fontSize: "0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                          <div><strong>Pickup Location:</strong> {job.pickupAddress}</div>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div><strong>Pickup Location:</strong> {job.pickupAddress}</div>
+                            <a
+                              href={getMapNavigationUrl(job.coordinates || job.pickupAddress)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: "var(--primary)", fontSize: "0.75rem", fontWeight: "700", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "2px" }}
+                            >
+                              Map <ExternalLink size={11} />
+                            </a>
+                          </div>
+                          {(job.city || job.state || job.pincode) && (
+                            <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                              📍 {[job.city, job.state].filter(Boolean).join(", ")} {job.pincode ? `• PIN: ${job.pincode}` : ""}
+                            </div>
+                          )}
                           <div><strong>Scheduled Date:</strong> {new Date(job.scheduledDate).toLocaleString()}</div>
                           <div><strong>Destination NGO:</strong> {job.request?.ngo?.name}</div>
                         </div>

@@ -21,6 +21,29 @@ const pickupSchema = new mongoose.Schema(
             trim: true
         },
 
+        city: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        state: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        pincode: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        coordinates: {
+            lat: { type: Number, default: null },
+            lng: { type: Number, default: null }
+        },
+
         scheduledDate: {
             type: Date,
             required: true

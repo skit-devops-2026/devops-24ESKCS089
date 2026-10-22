@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Sparkles
 } from "lucide-react";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 
 export default function CreateDonation() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,10 @@ export default function CreateDonation() {
     quantity: "",
     condition: "GOOD",
     pickupAddress: "",
+    city: "",
+    state: "",
+    pincode: "",
+    coordinates: null,
     availableUntil: ""
   });
   const [error, setError] = useState("");
@@ -191,28 +196,40 @@ export default function CreateDonation() {
             </div>
           </div>
 
-          {/* Location & Expiry */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <div>
-              <label>Available Until (Date & Time)</label>
-              <input
-                type="datetime-local"
-                required
-                value={formData.availableUntil}
-                onChange={(e) => setFormData({ ...formData, availableUntil: e.target.value })}
-              />
-            </div>
-            <div>
-              <label>Pickup Location / Address</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. 15 Community Way, Building A"
-                value={formData.pickupAddress}
-                onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-              />
-            </div>
+          {/* Expiry Date */}
+          <div>
+            <label>Available Until (Date & Time)</label>
+            <input
+              type="datetime-local"
+              required
+              value={formData.availableUntil}
+              onChange={(e) => setFormData({ ...formData, availableUntil: e.target.value })}
+            />
           </div>
+
+          {/* Location & Address with Free OSM Autocomplete */}
+          <LocationAutocomplete
+            label="Pickup Location & Address"
+            required={true}
+            value={{
+              pickupAddress: formData.pickupAddress,
+              city: formData.city,
+              state: formData.state,
+              pincode: formData.pincode,
+              coordinates: formData.coordinates
+            }}
+            onChange={(loc) => {
+              setFormData({
+                ...formData,
+                pickupAddress: loc.pickupAddress,
+                city: loc.city,
+                state: loc.state,
+                pincode: loc.pincode,
+                coordinates: loc.coordinates
+              });
+            }}
+            helperText="Accurate location, state, and pincode ensure seamless courier pickup and nearby NGO matching."
+          />
 
           {/* Submit */}
           <button

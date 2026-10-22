@@ -19,10 +19,12 @@ import {
   ShieldCheck,
   Send,
   SlidersHorizontal,
-  RotateCcw
+  RotateCcw,
+  ExternalLink
 } from "lucide-react";
 import Toast from "../components/Toast";
 import StarRating from "../components/StarRating";
+import { getMapNavigationUrl } from "../services/locationService";
 
 export default function Donations() {
   const [donations, setDonations] = useState([]);
@@ -104,11 +106,15 @@ export default function Donations() {
   const filteredDonations = donations
     .filter((item) => {
       const matchesCategory = selectedCategory === "ALL" || item.category === selectedCategory;
+      const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        !searchQuery ||
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.pickupAddress.toLowerCase().includes(searchQuery.toLowerCase());
+        !q ||
+        (item.title && item.title.toLowerCase().includes(q)) ||
+        (item.description && item.description.toLowerCase().includes(q)) ||
+        (item.pickupAddress && item.pickupAddress.toLowerCase().includes(q)) ||
+        (item.city && item.city.toLowerCase().includes(q)) ||
+        (item.state && item.state.toLowerCase().includes(q)) ||
+        (item.pincode && item.pincode.toLowerCase().includes(q));
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
@@ -219,7 +225,7 @@ export default function Donations() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search surplus items, goods, essentials or location..."
+                placeholder="Search items, city, state, or pincode (e.g. 110001)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -407,11 +413,62 @@ export default function Donations() {
                     </span>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <MapPin size={14} style={{ color: "var(--primary)", flexShrink: 0 }} />
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      <strong>Pickup:</strong> {item.pickupAddress}
-                    </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.4rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", minWidth: 0 }}>
+                        <MapPin size={14} style={{ color: "var(--primary)", flexShrink: 0 }} />
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.86rem" }}>
+                          <strong>Pickup:</strong> {item.pickupAddress}
+                        </span>
+                      </div>
+                      <a
+                        href={getMapNavigationUrl(item.coordinates || item.pickupAddress)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: "0.74rem",
+                          color: "var(--primary)",
+                          textDecoration: "none",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "2px",
+                          fontWeight: "600",
+                          flexShrink: 0
+                        }}
+                        title="View pickup location on Google Maps"
+                      >
+                        Map <ExternalLink size={11} />
+                      </a>
+                    </div>
+
+                    {(item.city || item.state || item.pincode) && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", paddingLeft: "1.25rem" }}>
+                        {(item.city || item.state) && (
+                          <span style={{
+                            fontSize: "0.72rem",
+                            background: "var(--canvas-subtle)",
+                            color: "var(--text-body)",
+                            padding: "1px 6px",
+                            borderRadius: "var(--radius-xs)",
+                            fontWeight: "600"
+                          }}>
+                            📍 {[item.city, item.state].filter(Boolean).join(", ")}
+                          </span>
+                        )}
+                        {item.pincode && (
+                          <span style={{
+                            fontSize: "0.72rem",
+                            background: "var(--indigo-subtle)",
+                            color: "var(--indigo)",
+                            padding: "1px 6px",
+                            borderRadius: "var(--radius-xs)",
+                            fontWeight: "700"
+                          }}>
+                            PIN: {item.pincode}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>

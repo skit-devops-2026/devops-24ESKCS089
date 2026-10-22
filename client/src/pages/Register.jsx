@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../api/services";
 import { useAuth } from "../context/AuthContext";
 import { HeartHandshake, User, Mail, Phone, Lock, ArrowRight, Heart, Users, Truck } from "lucide-react";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -10,7 +11,12 @@ export default function Register() {
     email: "",
     password: "",
     phone: "",
-    role: "DONOR"
+    role: "DONOR",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    coordinates: null
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -158,6 +164,30 @@ export default function Register() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
           </div>
+
+          {/* Base Location & Service Area */}
+          <LocationAutocomplete
+            label="Base Location & Address"
+            required={false}
+            value={{
+              pickupAddress: formData.address,
+              city: formData.city,
+              state: formData.state,
+              pincode: formData.pincode,
+              coordinates: formData.coordinates
+            }}
+            onChange={(loc) => {
+              setFormData({
+                ...formData,
+                address: loc.pickupAddress,
+                city: loc.city,
+                state: loc.state,
+                pincode: loc.pincode,
+                coordinates: loc.coordinates
+              });
+            }}
+            helperText="Provides location context to connect you with nearby surplus items and delivery routes."
+          />
 
           <button
             type="submit"

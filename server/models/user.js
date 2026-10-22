@@ -30,6 +30,35 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["DONOR", "NGO", "DELIVERY", "ADMIN"],
             default: "DONOR"
+        },
+
+        address: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        city: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        state: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        pincode: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+
+        coordinates: {
+            lat: { type: Number, default: null },
+            lng: { type: Number, default: null }
         }
     },
     {

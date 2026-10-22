@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { X, Calendar, MapPin, Truck, DollarSign, FileText } from "lucide-react";
+import LocationAutocomplete from "./LocationAutocomplete";
 
 export default function SchedulePickupModal({ request, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     pickupMethod: "SELF_PICKUP",
     pickupAddress: request?.donation?.pickupAddress || "",
+    city: request?.donation?.city || "",
+    state: request?.donation?.state || "",
+    pincode: request?.donation?.pincode || "",
+    coordinates: request?.donation?.coordinates || null,
     scheduledDate: "",
     deliveryFee: 15,
     notes: ""
@@ -25,6 +30,10 @@ export default function SchedulePickupModal({ request, onClose, onSubmit }) {
         requestId: request._id,
         pickupMethod: formData.pickupMethod,
         pickupAddress: formData.pickupAddress,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+        coordinates: formData.coordinates,
         scheduledDate: formData.scheduledDate,
         deliveryFee: formData.pickupMethod === "DELIVERY" ? Number(formData.deliveryFee) || 0 : 0,
         notes: formData.notes
@@ -93,19 +102,30 @@ export default function SchedulePickupModal({ request, onClose, onSubmit }) {
             </div>
           </div>
 
-          {/* Pickup Location */}
-          <div>
-            <label>Pickup Location / Address</label>
-            <div style={{ position: "relative" }}>
-              <input
-                type="text"
-                required
-                value={formData.pickupAddress}
-                onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-                placeholder="e.g. 124 Main Street, Warehouse B"
-              />
-            </div>
-          </div>
+          {/* Pickup Location with Free Location Autocomplete */}
+          <LocationAutocomplete
+            label="Pickup Location / Address"
+            required={true}
+            compact={true}
+            value={{
+              pickupAddress: formData.pickupAddress,
+              city: formData.city,
+              state: formData.state,
+              pincode: formData.pincode,
+              coordinates: formData.coordinates
+            }}
+            onChange={(loc) => {
+              setFormData({
+                ...formData,
+                pickupAddress: loc.pickupAddress,
+                city: loc.city,
+                state: loc.state,
+                pincode: loc.pincode,
+                coordinates: loc.coordinates
+              });
+            }}
+            helperText="Address, state, and pincode verified for logistics dispatch"
+          />
 
           {/* Scheduled Date */}
           <div>

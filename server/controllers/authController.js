@@ -15,7 +15,7 @@ const waitForDb = async (timeoutMs = 4000) => {
 
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone, role } = req.body;
+        const { name, email, password, phone, role, address, city, state, pincode, coordinates } = req.body;
 
         // Check if database is connected, allow brief grace period for connection
         if (mongoose.connection.readyState !== 1) {
@@ -53,7 +53,12 @@ const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             phone,
-            role: role || "DONOR"
+            role: role || "DONOR",
+            address: address || "",
+            city: city || "",
+            state: state || "",
+            pincode: pincode || "",
+            coordinates: coordinates || null
         });
 
         // Create JWT token
@@ -77,7 +82,12 @@ const registerUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                role: user.role
+                role: user.role,
+                address: user.address,
+                city: user.city,
+                state: user.state,
+                pincode: user.pincode,
+                coordinates: user.coordinates
             }
         });
 
@@ -154,7 +164,12 @@ const loginUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                role: user.role
+                role: user.role,
+                address: user.address,
+                city: user.city,
+                state: user.state,
+                pincode: user.pincode,
+                coordinates: user.coordinates
             }
         });
 

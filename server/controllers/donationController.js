@@ -29,6 +29,10 @@ const createDonation = async (req, res) => {
             quantity,
             condition,
             pickupAddress,
+            city,
+            state,
+            pincode,
+            coordinates,
             availableUntil
         } = req.body;
 
@@ -53,6 +57,10 @@ const createDonation = async (req, res) => {
             quantity,
             condition: condition || "GOOD",
             pickupAddress,
+            city: city || "",
+            state: state || "",
+            pincode: pincode || "",
+            coordinates: coordinates || null,
             availableUntil
         });
 
